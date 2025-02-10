@@ -1,0 +1,10 @@
+app = "tsikavakava"
+
+[build]
+  image = "python:3.10"
+
+[env]
+  API_URL = "https://text-corrector-wubj.onrender.com"
+
+[processes]
+  app = "python bot.py"
