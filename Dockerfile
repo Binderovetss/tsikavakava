@@ -1,14 +1,17 @@
-# Используем Python 3.10
-FROM python:3.10
+# Use Python 3.10 as the base image
+FROM python:3.10-slim
 
-# Устанавливаем рабочую директорию
+# Set the working directory
 WORKDIR /app
 
-# Копируем ВСЕ файлы проекта в контейнер
+# Copy the application code
 COPY . /app
 
-# Устанавливаем зависимости
-RUN pip install --no-cache-dir -r /app/requirements.txt
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Запускаем бота
-CMD ["python", "/app/bot.py"]
+# Expose port 8080 for Fly.io
+EXPOSE 8080
+
+# Run the bot application
+CMD ["python", "bot.py"]
