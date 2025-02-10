@@ -5,7 +5,7 @@ import os
 
 # Your webhook URL, replace with your Fly.io URL
 WEBHOOK_URL = "https://tsikavakava.fly.dev"
-BOT_TOKEN = "your_bot_token_here"  # Replace with your bot token
+BOT_TOKEN = "7368319072:AAGRGJU9NqchsjSMGHdVSrKGZEXYfyyRiUE"  # Replace with your bot token
 
 # Configure logging
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
@@ -30,7 +30,7 @@ async def main():
         listen="0.0.0.0",  # Make sure the bot listens on all available IPs
         port=int(os.environ.get('PORT', 8080)),  # Use port 8080 for Fly.io
         webhook_url=f"{WEBHOOK_URL}/{BOT_TOKEN}",  # Full webhook URL
-        secret_token="your_secret_token_here",  # Optional: Set a secret token for security
+        secret_token="7368319072:AAGRGJU9NqchsjSMGHdVSrKGZEXYfyyRiUE",  # Optional: Set a secret token for security
     )
 
 if __name__ == "__main__":
