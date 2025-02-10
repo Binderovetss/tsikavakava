@@ -8,7 +8,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 # Замените на ваш токен бота
-BOT_TOKEN = "YO7368319072:AAGRGJU9NqchsjSMGHdVSrKGZEXYfyyRiUE"
+BOT_TOKEN = "7368319072:AAGRGJU9NqchsjSMGHdVSrKGZEXYfyyRiUE"
 WEBHOOK_URL = "https://tsikavakava.fly.dev"  # Ваш публичный URL от Fly.io
 
 # Создайте объект приложения
