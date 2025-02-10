@@ -1,21 +1,24 @@
 import os
 import requests
-import sqlite3
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters
+from telegram.ext import ContextTypes
 
-# 📌 Замените на свой API URL (Render)
-API_URL = "https://text-corrector-wubj.onrender.com"  # 🔹 Вставьте свою ссылку с Render!
+# 📌 Замените на свой API URL (Render) или оставьте как есть
+API_URL = "https://text-corrector-wubj.onrender.com"  # Вставьте свою ссылку с Render!
 
 # 📌 Замените на свой Telegram Bot Token
 BOT_TOKEN = "7368319072:AAGRGJU9NqchsjSMGHdVSrKGZEXYfyyRiUE"
 
-# 📌 Подключаем базу данных SQLite
-DB_FILE = "knowledge_base.db"
+# 📌 Ваш публичный URL
+WEBHOOK_URL = "https://tsikavakava.fly.dev"  # Замените на ваш публичный URL от Fly.io
+
+# 📌 Порт для прослушивания webhook (обычно 8443 для HTTPS)
+PORT = 8443
 
 # 📌 Функция для создания базы данных (если её нет)
 def create_database():
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect("knowledge_base.db")
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS knowledge (
@@ -29,7 +32,7 @@ def create_database():
 
 # 📌 Функция для сохранения данных в базу
 def save_to_db(text, photo_path=None):
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect("knowledge_base.db")
     cursor = conn.cursor()
     cursor.execute("INSERT INTO knowledge (text, photo) VALUES (?, ?)", (text, photo_path))
     conn.commit()
@@ -94,7 +97,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # 📌 Функция поиска в базе данных
 def search_in_db(keyword):
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect("knowledge_base.db")
     cursor = conn.cursor()
     cursor.execute("SELECT text, photo FROM knowledge WHERE text LIKE ?", ('%' + keyword + '%',))
     results = cursor.fetchall()
@@ -146,7 +149,12 @@ def main():
 
     # 📌 Запускаем бота
     print("✅ Бот запущен!")
-    app.run_polling()
+    app.run_webhook(
+        listen="0.0.0.0",  # Прослушиваем все IP-адреса
+        port=PORT,  # Порт для получения запросов
+        url_path=BOT_TOKEN,  # Используем токен для уникальности пути
+        webhook_url=f"{WEBHOOK_URL}/{BOT_TOKEN}",  # Формируем URL для webhook
+    )
 
 # 📌 Создаём базу данных перед запуском
 if __name__ == "__main__":
