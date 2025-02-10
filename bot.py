@@ -5,7 +5,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes
 
 # 📌 Замените на свой API URL (Render)
-API_URL = "https://text-corrector-wubj.onrender.com"  # 🔹 Вставь свою ссылку с Render!
+API_URL = "https://text-corrector-wubj.onrender.com"  # 🔹 Вставьте свою ссылку с Render!
 
 # 📌 Замените на свой Telegram Bot Token
 BOT_TOKEN = "7368319072:AAGRGJU9NqchsjSMGHdVSrKGZEXYfyyRiUE"
@@ -38,11 +38,11 @@ def save_to_db(text, photo_path=None):
 # 📌 Стартовое меню
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
-        [InlineKeyboardButton("📝 Додати інформацію", callback_data="add_info")],
-        [InlineKeyboardButton("🔍 Знайти інформацію", callback_data="search_info")]
+        [InlineKeyboardButton("📝 Добавить информацию", callback_data="add_info")],
+        [InlineKeyboardButton("🔍 Найти информацию", callback_data="search_info")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("🔹 Виберіть дію:", reply_markup=reply_markup)
+    await update.message.reply_text("🔹 Выберите действие:", reply_markup=reply_markup)
 
 # 📌 Обработчик нажатий на кнопки
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -51,13 +51,13 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if query.data == "add_info":
         context.user_data["waiting_for_info"] = True
-        await query.message.reply_text("📌 Надішліть текст (і фото, якщо потрібно).")
+        await query.message.reply_text("📌 Отправьте текст (и фото, если нужно).")
     
     elif query.data == "search_info":
         context.user_data["waiting_for_search"] = True
-        await query.message.reply_text("🔍 Введіть ключове слово для пошуку.")
+        await query.message.reply_text("🔍 Введите ключевое слово для поиска.")
 
-# 📌 Обработчик сообщений (Добавление информации)
+# 📌 Обработчик текстовых сообщений (Добавление информации)
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if "waiting_for_info" in context.user_data and context.user_data["waiting_for_info"]:
         text = update.message.text
@@ -71,7 +71,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         # 📌 Сохраняем исправленный текст в базу
         save_to_db(corrected_text)
-        await update.message.reply_text(f"✅ Текст додано до бази знань:\n\n{corrected_text}")
+        await update.message.reply_text(f"✅ Текст добавлен в базу знаний:\n\n{corrected_text}")
 
         # 📌 Сбрасываем флаг
         context.user_data["waiting_for_info"] = False
@@ -81,14 +81,14 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         results = search_in_db(keyword)
 
         if results:
-            await update.message.reply_text("🔍 Ось результати пошуку:")
+            await update.message.reply_text("🔍 Вот результаты поиска:")
             for text, photo in results:
                 if photo:
                     await update.message.reply_photo(photo=open(photo, "rb"), caption=text)
                 else:
                     await update.message.reply_text(text)
         else:
-            await update.message.reply_text("❌ Нічого не знайдено.")
+            await update.message.reply_text("❌ Ничего не найдено.")
 
         context.user_data["waiting_for_search"] = False
 
@@ -114,21 +114,25 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             else:
                 corrected_text = text
 
-            # 📌 Загружаем фото
+            # 📌 Получаем файл
             photo_file = await update.message.photo[-1].get_file()
+
+            # Указываем путь для сохранения файла
             photo_path = f"photos/{photo_file.file_id}.jpg"
-            await photo_file.download(photo_path)
+            
+            # 📌 Скачиваем файл
+            await photo_file.download(destination_file=photo_path)
 
             # 📌 Сохраняем текст и фото в базу
             save_to_db(corrected_text, photo_path)
-            await update.message.reply_text(f"✅ Текст і фото збережені:\n\n{corrected_text}")
+            await update.message.reply_text(f"✅ Текст и фото сохранены:\n\n{corrected_text}")
 
         else:
-            await update.message.reply_text("❌ Будь ласка, додайте підпис до фото!")
+            await update.message.reply_text("❌ Пожалуйста, добавьте подпись к фото!")
 
         context.user_data["waiting_for_info"] = False
 
-# 📌 Настраиваем бота
+# 📌 Настроим бота
 def main():
     app = Application.builder().token(BOT_TOKEN).build()
 
@@ -141,7 +145,7 @@ def main():
     app.add_handler(CallbackQueryHandler(button_handler))
 
     # 📌 Запускаем бота
-    print("✅ Бот запущений!")
+    print("✅ Бот запущен!")
     app.run_polling()
 
 # 📌 Создаём базу данных перед запуском
