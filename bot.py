@@ -28,7 +28,7 @@ def main():
         port=8080,  # Порт, на котором будет работать вебхук
         url_path=BOT_TOKEN,
         webhook_url=f"{WEBHOOK_URL}/{BOT_TOKEN}",  # Формируем URL для webhook
-        secret_token="7368319072:AAGRGJU9NqchsjSMGHdVSrKGZEXYfyyRiUE",  # Можно установить секретный токен
+        secret_token="your_secret_token",  # Можно установить секретный токен
     )
 
 if __name__ == "__main__":
